@@ -16,7 +16,7 @@
     
 	<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="index.php?p=home">Grafikart Tuto</a>
+		<a class="navbar-brand" href="index.php">Grafikart Tuto</a>
 	</div>
 	</nav>
 
