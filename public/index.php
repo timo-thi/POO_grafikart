@@ -1,23 +1,33 @@
 <?php
-require '../app/autoloader.php';
-App\Autoloader::register();
+define('ROOT', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+require ROOT . 'app/App.php';
+App::load();
 
+$app = App::getInstance();
+
+
+/**
+ * Check if the page exists
+ * If not, redirect to home
+ */
 if (isset($_GET['p'])) {
-	$p = $_GET['p'];
+	$page = $_GET['p'];
 } else {
-	$p = 'home';
+	$page = 'home';
 }
 
 ob_start();
 
-if ($p === 'home') {
-	require '../pages/home.php';
-} elseif ($p === 'article') {
-	require '../pages/single.php';
-} elseif ($p === 'categorie') {
-	require '../pages/categorie.php';
+if ($page === 'home') {
+	require ROOT . '/pages/posts/home.php';
+} elseif ($page === 'posts.category') {
+	require ROOT . '/pages/posts/category.php';
+} elseif ($page === 'posts.show') {
+	require ROOT . '/pages/posts/show.php';
+} elseif ($page === 'login') {
+	require ROOT . '/pages/users/login.php';
 }
 
 $content = ob_get_clean();
 
-require '../pages/templates/default.php';
+require ROOT . '/pages/templates/default.php';

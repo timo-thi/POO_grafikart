@@ -1,40 +1,62 @@
 <?php
-namespace App;
+
+use \Core\Config;
+use Core\Database\MysqlDatabase;
+use Core\Table\Table;
 
 class App {
 
-	const DB_NAME = 'Grafikart';
-	const DB_USER = 'IngeDev';
-	const DB_PASS = 'IngeDev#';
-	const DB_HOST = 'localhost:3306';
+
+	public $title = 'Grafikart Tutorials';
+	private static $_instance;
+	private $db_instance;
 
 
-	private static $database;
-
-
-	private static $title = 'Grafikart Tutorials';
-
-
-	public static function getDb(): Database {
-		if (self::$database === null) {
-			self::$database = new Database(self::DB_NAME, self::DB_USER, self::DB_PASS, self::DB_HOST);
+	public static function getInstance(): self{
+		if (is_null(self::$_instance)) {
+			self::$_instance = new App();
 		}
-		return self::$database;
+		return self::$_instance;
 	}
 
 
-	public static function notFound() {
+	public static function load(){
+		session_start();
+		require ROOT . 'app/Autoloader.php';
+		App\Autoloader::register();
+		require ROOT . 'core/Autoloader.php';
+		Core\Autoloader::register();
+	}
+
+
+	public function getTable($name): Table {
+		$class_name = '\\App\\Table\\' . ucfirst($name) . 'Table';
+		return new $class_name($this->getDB());
+	}
+
+
+	public function getDB() {
+		$config = Config::getInstance(ROOT . 'config/config.php');
+		if (is_null($this->db_instance)) {
+			$this->db_instance = new MysqlDatabase($config->get('db_name'), $config->get('db_user'), $config->get('db_pass'), $config->get('db_host'));
+		}
+		return $this->db_instance;
+	}
+
+
+	public function notFound() {
 		header("HTTP/1.0 404 Not Found");
-		header("Location: index.php?p=404");
+		header("Page not Found");
 	}
 
 
-	public static function getTitle() {
-		return self::$title;
+	public function setTitle($title) {
+		$this->title .= " | $title";
 	}
 
 
-	public static function setTitle($title) {
-		self::$title = $title . ' - ' . self::$title;
+	public function forbidden() {
+		header("HTTP/1.0 403 Forbidden");
+		die('Accès interdit');
 	}
 }
